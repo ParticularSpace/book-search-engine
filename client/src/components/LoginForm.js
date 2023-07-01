@@ -4,7 +4,7 @@ import { useMutation, gql } from '@apollo/client';
 
 import Auth from '../utils/auth';
 
-// Define the LOGIN_USER mutation using gql
+// LOGIN_USER mutation using gql
 const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -22,9 +22,7 @@ const LoginForm = () => {
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  // useMutation hook returns a tuple that includes:
-  // - A mutate function that you can call to execute the mutation
-  // - An object with fields that represent the current status of the mutation's execution
+
   const [login, { error }] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event) => {
@@ -35,7 +33,7 @@ const LoginForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
+    // check if form has everything 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -43,7 +41,7 @@ const LoginForm = () => {
     }
 
     try {
-      // execute the login mutation and pass in the email and password from the form
+      // login mutation and pass in the email and password from the form
       const { data } = await login({
         variables: { ...userFormData },
       });
