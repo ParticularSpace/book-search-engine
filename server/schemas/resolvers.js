@@ -3,75 +3,85 @@ const { signToken } = require('../utils/auth');
 const { AuthenticationError } = require('apollo-server-errors');
 
 const resolvers = {
-  Query: {
-    me: async (parent, args, context) => {
-      if (context.user) {
-        const userData = await User.findOne({ _id: context.user._id })
-          .select('-__v -password')
-          .populate('books');
+    Query: {
+        me: async (parent, args, context) => {
+            console.log('Route hit', context);
+            if (context.user) {
+                const userData = await User.findOne({ _id: context.user._id })
+                    .select('-__v -password')
+                    .populate('savedBooks');
 
-        return userData;
-      }
 
-      throw new AuthenticationError('Not logged in');
-    },
-  },
 
-  Mutation: {
-    addUser: async (parent, args) => {
-      const user = await User.create(args);
-      const token = signToken(user);
+                return userData;
+            }
 
-      return { token, user };
+            throw new AuthenticationError('Not logged in');
+        },
     },
 
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
+    Mutation: {
+        addUser: async (parent, args) => {
+            const user = await User.create(args);
+            const token = signToken(user);
 
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
+            return { token, user };
+        },
 
-      const correctPw = await user.isCorrectPassword(password);
+        login: async (parent, { email, password }) => {
+            const user = await User.findOne({ email });
 
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
+            if (!user) {
+                throw new AuthenticationError('Incorrect credentials');
+            }
 
-      const token = signToken(user);
-      return { token, user };
+            const correctPw = await user.isCorrectPassword(password);
+
+            if (!correctPw) {
+                throw new AuthenticationError('Incorrect credentials');
+            }
+
+            const token = signToken(user);
+            return { token, user };
+        },
+
+        saveBook: async (parent, bookData, context) => {
+            console.log('Route hit in saveBook', context.user, bookData);
+            if (context.user) {
+                console.log('User ID:', context.user._id);
+
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $push: { savedBooks: bookData.bookData } },
+                    { new: true, runValidators: true }
+                );
+
+
+                console.log('Route hit:', JSON.stringify({ user: context.user }, null, 2));
+
+
+
+                return updatedUser;
+            }
+
+            throw new AuthenticationError('You need to be logged in!');
+        },
+
+
+        removeBook: async (parent, { bookId }, context) => {
+            if (context.user) {
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId } } },
+                    { new: true }
+                );
+
+                return updatedUser;
+            }
+
+            throw new AuthenticationError('You need to be logged in!');
+        },
     },
-
-    saveBook: async (parent, { bookData }, context) => {
-        console.log('Route hit', context);
-        if (context.user) {
-          const updatedUser = await User.findOneAndUpdate(
-            { _id: context.user._id },
-            { $push: { savedBooks: bookData } },
-            { new: true, runValidators: true }
-          );
-      
-          return updatedUser;
-        }
-      
-        throw new AuthenticationError('You need to be logged in!');
-      },
-      
-
-    removeBook: async (parent, { bookId }, context) => {
-      if (context.user) {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: context.user._id },
-          { $pull: { savedBooks: { bookId } } },
-          { new: true }
-        );
-
-        return updatedUser;
-      }
- 
-      throw new AuthenticationError('You need to be logged in!');
-    },
-  },
 };
 
 module.exports = resolvers;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import { Container, Col, Form, Button, Card, Row } from 'react-bootstrap';
 import Auth from '../utils/auth';
-import { save_book } from '../utils/API'; // assuming you have mutations.js file in utils folder
+import { save_book } from '../utils/API'; 
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
@@ -44,31 +44,29 @@ const SearchBooks = () => {
 
   const handleSaveBook = async (bookId) => {
   
-    const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-   
+    const bookData = searchedBooks.find((book) => book.bookId === bookId);
+    console.log(' this is bookData', {...bookData});
     const token = Auth.loggedIn() ? Auth.getToken() : null;
       console.log(' this is token in handleSaveBook');
     if (!token) {
       return false;
     }
     try {
-      console.log(' this is bookToSave');
+      console.log(bookData, ' this is bookToSave');
       const { data } = await saveBook({
-        variables: { ...bookToSave },
+        variables: bookData,
         context: {
           headers: {
             authorization: `Bearer ${token}`
           }
         }
       });
-      
-      
-      
+  
       console.log(data, ' this is data');
       if (!data.saveBook) {
         throw new Error('something went wrong!');
       }
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+      setSavedBookIds([...savedBookIds, bookData.bookId]);
     } catch (err) {
       console.error(err);
     }

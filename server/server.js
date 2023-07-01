@@ -25,7 +25,7 @@ const getUserFromToken = async (token) => {
     }
 
     // decode the token using your secret key
-    const { data } = jwt.verify(token, 'mysecretsshhhhh'); // replace 'mysecretsshhhhh' with your secret key
+    const { data } = jwt.verify(token, 'mysecretsshhhhh'); 
 
     // find the user with the _id from the token
     const user = await User.findById(data._id);
@@ -44,18 +44,16 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    // get the user token from the headers
+  
     const token = req.headers.authorization || '';
 
-    // try to retrieve a user with the token
     const user = await getUserFromToken(token);
 
-    // add the user to the context
     return { user };
   },
 });
 
-// Start the Apollo server and apply middleware inside an async IIFE
+// Start the Apollo server
 (async function() {
   await server.start();
   server.applyMiddleware({ app });
