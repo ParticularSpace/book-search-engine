@@ -1,15 +1,35 @@
 import React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
-import { deleteBook } from '../utils/API'; 
-import { getMe } from '../utils/API'; 
+import { GET_ME } from '../utils/API'; 
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
+import { gql } from '@apollo/client';
+
+const REMOVE_BOOK = gql`
+  mutation removeBook($bookId: String!) {
+    removeBook(bookId: $bookId) {
+      _id
+      username
+      email
+      bookCount
+      savedBooks {
+        bookId
+        authors
+        description
+        title
+        image
+        link
+      }
+    }
+  }
+`;
+
 
 const SavedBooks = () => {
   // useQuery hook to make query request
   console.log("Start of saved books")
-  const { loading, data, error } = useQuery(getMe);
+  const { loading, data, error } = useQuery(GET_ME);
   if (error) {
     console.error("Error fetching data:", error);
   }
@@ -19,7 +39,7 @@ const SavedBooks = () => {
   console.log(userData, ' this is userData in SavedBooks');
 
   // useMutation hook to create a function that runs the deleteBook mutation
-  const [removeBook] = useMutation(deleteBook);
+  const [removeBook] = useMutation(REMOVE_BOOK);
 
   
   const handleDeleteBook = async (bookId) => {
@@ -34,7 +54,7 @@ const SavedBooks = () => {
         variables: { bookId },
         update: (cache, { data: { removeBook } }) => {
           cache.writeQuery({
-            query: getMe,
+            query: GET_ME,
             data: { me: removeBook },
           });
         },
