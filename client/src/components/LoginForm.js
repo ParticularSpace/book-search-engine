@@ -17,19 +17,22 @@ const LOGIN_USER = gql`
   }
 `;
 
+// LoginForm function returning the login form
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-
+  // useMutation hook to create a function that runs the LOGIN_USER mutation
   const [login, { error }] = useMutation(LOGIN_USER);
 
+  // creating function to handleInputChange
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
   };
 
+  // creating function to handleFormSubmit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
@@ -45,13 +48,13 @@ const LoginForm = () => {
       const { data } = await login({
         variables: { ...userFormData },
       });
-
+      // use Auth.login to log the user in after signing up
       Auth.login(data.login.token);
     } catch (e) {
       console.error(e);
       setShowAlert(true);
     }
-
+    // clear form values
     setUserFormData({
       username: '',
       email: '',

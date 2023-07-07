@@ -6,6 +6,7 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 import { gql } from '@apollo/client';
 
+// creating const REMOVE_BOOK to remove a book
 const REMOVE_BOOK = gql`
   mutation removeBook($bookId: String!) {
     removeBook(bookId: $bookId) {
@@ -25,31 +26,32 @@ const REMOVE_BOOK = gql`
   }
 `;
 
-
+// creating SavedBooks function to view saved books
 const SavedBooks = () => {
   // useQuery hook to make query request
-  console.log("Start of saved books")
   const { loading, data, error } = useQuery(GET_ME);
+
   if (error) {
     console.error("Error fetching data:", error);
   }
-
+  // use object destructuring to extract data from the useQuery hook's response and rename it userData
   const userData = data?.me || {};
-
-  console.log(userData, ' this is userData in SavedBooks');
 
   // useMutation hook to create a function that runs the deleteBook mutation
   const [removeBook] = useMutation(REMOVE_BOOK);
 
-  
+  // creating function to handleDeleteBook
   const handleDeleteBook = async (bookId) => {
+    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
+    // return false if there is no token
     if (!token) {
       return false;
     }
 
     try {
+      // run removeBook mutation and pass in variable data for bookId to remove a book from a user's profile
       await removeBook({
         variables: { bookId },
         update: (cache, { data: { removeBook } }) => {
@@ -67,6 +69,7 @@ const SavedBooks = () => {
     }
   };
 
+  // if data isn't here yet, say so
   if (loading) {
     return <h2>LOADING...</h2>;
   }

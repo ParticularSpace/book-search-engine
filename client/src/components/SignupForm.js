@@ -25,18 +25,20 @@ const SignupForm = () => {
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
 
-  // useMutation hook returns a mutate function (signup) and the data returned from the mutation
+  // returns a mutate function signup and the data returned from the mutation
   const [signup, { error }] = useMutation(SIGNUP_USER);
 
+  // create function to handle user form input changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
   };
 
+  // create function to handle form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
+    // check if form has everything
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -48,13 +50,13 @@ const SignupForm = () => {
       const { data } = await signup({
         variables: { ...userFormData },
       });
-
+      // use Auth.login to log the user in after signing up
       Auth.login(data.addUser.token);
     } catch (e) {
       console.error(e);
       setShowAlert(true);
     }
-
+    // clear form values
     setUserFormData({
       username: '',
       email: '',
@@ -64,7 +66,7 @@ const SignupForm = () => {
 
   return (
     <>
-      {/* This is needed for the validation functionality above */}
+      {/* validation functionality above */}
       <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
         {/* show alert if server response is bad */}
         <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>

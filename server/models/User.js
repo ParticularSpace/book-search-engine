@@ -1,8 +1,10 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
 
+// import the Book schema
 const bookSchema = require('./Book');
 
+// create the User schema
 const userSchema = new Schema(
   {
     username: {
@@ -20,7 +22,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    // set savedBooks to be an array of data that adheres to the bookSchema
+    // set savedBooks to be an array
     savedBooks: [bookSchema],
   },
   {
@@ -50,6 +52,8 @@ userSchema.virtual('bookCount').get(function () {
   return this.savedBooks.length;
 });
 
+// create the User model using the UserSchema
 const User = model('User', userSchema);
 
+// export the User model
 module.exports = User;

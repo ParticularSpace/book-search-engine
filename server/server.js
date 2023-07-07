@@ -6,20 +6,21 @@ const db = require('./config/connection');
 const jwt = require('jsonwebtoken');
 const { User } = require('./models');
 
-
+// set up express app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 
 
-
+// helper function to get a user's token from the request headers
 const getUserFromToken = async (token) => {
   if (!token) {
     return null;
   }
 
+  
   try {
-    // remove 'Bearer ' from token
+    // remove 'Bearer ' just want the token itself
     if (token.startsWith('Bearer ')) {
       token = token.slice(7, token.length).trimLeft();
     }
@@ -39,7 +40,7 @@ const getUserFromToken = async (token) => {
 
 
 
-// Create a new Apollo server and pass in our schema data
+// Create a new Apollo server and pass in the schema data
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -49,6 +50,7 @@ const server = new ApolloServer({
 
     const user = await getUserFromToken(token);
 
+    // return an object user
     return { user };
   },
 });
@@ -58,6 +60,7 @@ const server = new ApolloServer({
   await server.start();
   server.applyMiddleware({ app });
 
+  // middleware
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
@@ -66,6 +69,7 @@ const server = new ApolloServer({
     app.use(express.static(path.join(__dirname, '../client/build')));
   }
 
+  // db.once called when the connection to the database is established
   db.once('open', () => {
     app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
     console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);

@@ -6,6 +6,7 @@ import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import { gql } from '@apollo/client';
 
+// creating const SAVE_BOOK to save a book
 const SAVE_BOOK = gql`
   mutation saveBook($authors: [String]!, $description: String!, $title: String!, $bookId: String!, $image: String, $link: String) {
     saveBook(authors: $authors, description: $description, title: $title, bookId: $bookId, image: $image, link: $link) {
@@ -25,16 +26,20 @@ const SAVE_BOOK = gql`
   }
 `;
 
+// SearchBooks function returning the search bar and the results of the search
 const SearchBooks = () => {
+  // creating useState for searchedBooks, searchInput, savedBookIds
   const [searchedBooks, setSearchedBooks] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
   const [saveBook] = useMutation(SAVE_BOOK);
 
+  // creating useEffect to saveBookIds
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
 
+  // creating function to handleFormSubmit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!searchInput) {
@@ -60,17 +65,20 @@ const SearchBooks = () => {
     }
   };
 
+  // creating function to save a book
   const handleSaveBook = async (bookId) => {
-  
+    // get bookData from searchedBooks array
     const bookData = searchedBooks.find((book) => book.bookId === bookId);
-    console.log(' this is bookData', {...bookData});
+    
+    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
       console.log(' this is token in handleSaveBook');
+      // if no token, return false
     if (!token) {
       return false;
     }
     try {
-      console.log(bookData, ' this is bookToSave');
+      // save bookData
       const { data } = await saveBook({
         variables: bookData,
         context: {
@@ -80,7 +88,7 @@ const SearchBooks = () => {
         }
       });
   
-      console.log(data, ' this is data');
+      // if no data, throw error
       if (!data.saveBook) {
         throw new Error('something went wrong!');
       }

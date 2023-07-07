@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server-express');
 
+// Define the query and mutation functionality to work with the Mongoose models.
 const typeDefs = gql`
   type Book {
     authors: [String]
