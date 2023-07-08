@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ParticularSpace.github.io/book-search-engine",
   "proxy": "http://localhost:3001",
   "dependencies": {
     "@apollo/client": "^3.7.16",
@@ -42,8 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^5.0.0"
   }
 }
