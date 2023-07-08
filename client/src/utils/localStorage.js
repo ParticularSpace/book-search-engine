@@ -1,12 +1,22 @@
 
 // Find saved books, return empty array if none
-export const getSavedBookIds = () => {
-  const savedBookIds = localStorage.getItem('saved_books')
-    ? JSON.parse(localStorage.getItem('saved_books'))
-    : [];
+export function getSavedBookIds() {
+  const savedBookIds = localStorage.getItem('saved_books');
 
-  return savedBookIds;
-};
+  if (!savedBookIds) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(savedBookIds);
+  } catch (err) {
+    console.error('Error parsing saved book IDs from local storage', err);
+    return [];
+  }
+}
+
+
+
 
 // Save book ids to local storage
 export const saveBookIds = (bookIdArr) => {

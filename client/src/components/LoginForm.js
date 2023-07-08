@@ -1,21 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, useApolloClient } from '@apollo/client';
 
 import Auth from '../utils/auth';
-
-// LOGIN_USER mutation using gql
-const LOGIN_USER = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      token
-      user {
-        _id
-        username
-      }
-    }
-  }
-`;
+import { saveBookIds } from '../utils/localStorage';
+import { LOGIN_USER, GET_ME } from '../utils/API';
 
 // LoginForm function returning the login form
 const LoginForm = () => {
@@ -26,6 +15,9 @@ const LoginForm = () => {
   // useMutation hook to create a function that runs the LOGIN_USER mutation
   const [login, { error }] = useMutation(LOGIN_USER);
 
+  // Get the Apollo Client instance
+  const client = useApolloClient();
+
   // creating function to handleInputChange
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -35,21 +27,39 @@ const LoginForm = () => {
   // creating function to handleFormSubmit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     // check if form has everything 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
-
+  
     try {
       // login mutation and pass in the email and password from the form
       const { data } = await login({
         variables: { ...userFormData },
       });
+  
       // use Auth.login to log the user in after signing up
       Auth.login(data.login.token);
+  
+      // Fetch the user's saved books from the database
+      const { data: userData } = await client.query({
+        query: GET_ME,
+        context: {
+          headers: {
+            authorization: `Bearer ${Auth.getToken()}`
+          }
+        }
+      });
+  
+      // Get the book IDs from the saved books
+      const savedBookIds = userData.me.savedBooks.map(book => book.bookId);
+  
+      // Update the local storage with the saved book IDs
+      saveBookIds(savedBookIds);
+  
     } catch (e) {
       console.error(e);
       setShowAlert(true);
@@ -61,6 +71,7 @@ const LoginForm = () => {
       password: '',
     });
   };
+  
 
   return (
     <>
