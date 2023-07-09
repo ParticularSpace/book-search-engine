@@ -4,8 +4,8 @@
   "description": "",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "cd client && npm run build"
+    "start": "node server/server.js",
+    "heroku-postbuild": "npm run build"
   },
   "engines": {
     "node": "18.x"
