@@ -5,8 +5,8 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "build": "react-script build",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "cd client && npm run build",
+    "build": "react-scripts build"
   },
   "engines": {
     "node": "18.x"
