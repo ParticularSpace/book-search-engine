@@ -11,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 
+const jwtSecret = process.env.JWT_SECRET || 'mysecretsshhhhh';
 
 // helper function to get a user's token from the request headers
 const getUserFromToken = async (token) => {
@@ -26,7 +27,7 @@ const getUserFromToken = async (token) => {
     }
 
     // decode the token using your secret key
-    const { data } = jwt.verify(token, 'mysecretsshhhhh'); 
+    const { data } = jwt.verify(token, jwtSecret); 
 
     // find the user with the _id from the token
     const user = await User.findById(data._id);
@@ -66,7 +67,10 @@ const server = new ApolloServer({
 
   // if we're in production, serve client/build as static assets
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    });
+    
   }
 
   // db.once called when the connection to the database is established
