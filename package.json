@@ -6,8 +6,10 @@
   "scripts": {
     "start": "node server/server.js",
     "heroku-postbuild": "cd client && npm run build"
-  }
-  ,
+  },
+  "engines": {
+    "node": "18.15.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
