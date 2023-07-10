@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 
-const jwtSecret = process.env.JWT_SECRET || 'mysecretsshhhhh';
+const jwtSecret = process.env.JWT_SECRET;
 
 // helper function to get a user's token from the request headers
 const getUserFromToken = async (token) => {
@@ -26,6 +26,7 @@ const getUserFromToken = async (token) => {
       token = token.slice(7, token.length).trimLeft();
     }
 
+    
     // decode the token using your secret key
     const { data } = jwt.verify(token, jwtSecret); 
 
