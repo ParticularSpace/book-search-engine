@@ -15,9 +15,6 @@ export function getSavedBookIds() {
   }
 }
 
-
-
-
 // Save book ids to local storage
 export const saveBookIds = (bookIdArr) => {
   if (bookIdArr.length) {

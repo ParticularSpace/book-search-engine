@@ -1,10 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useMutation, useApolloClient } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 import Auth from '../utils/auth';
 import { saveBookIds } from '../utils/localStorage';
-import { LOGIN_USER, GET_ME } from '../utils/API';
+
+// logged in user's info
+export const GET_ME = gql`
+  query me {
+    me {
+      _id
+      username
+      email
+      savedBooks {
+        bookId
+        authors
+        description
+        title
+        image
+        link
+      }
+    }
+  }
+`;
+
+// logging in a user
+export const LOGIN_USER = gql`
+  mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        _id
+        username
+      }
+    }
+  }
+`;
 
 // LoginForm function returning the login form
 const LoginForm = () => {
