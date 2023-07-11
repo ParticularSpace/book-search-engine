@@ -37,7 +37,9 @@ const SavedBooks = () => {
       // run removeBook mutation and pass in variable data for bookId to remove a book from a user's profile
       await removeBook({
         variables: { bookId },
+        // upon success, remove book's id from localStorage
         update: (cache, { data: { removeBook } }) => {
+          // cache.writeQery to update me object's savedBooks array
           cache.writeQuery({
             query: GET_ME,
             data: { me: removeBook },

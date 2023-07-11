@@ -7,9 +7,6 @@ import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import { SAVE_BOOK } from '../utils/mutations';
 
 
-
-
-
 // SearchBooks function returning the search bar and the results of the search
 const SearchBooks = () => {
   // creating useState for searchedBooks, searchInput, savedBookIds
@@ -30,11 +27,14 @@ const SearchBooks = () => {
       return false;
     }
     try {
+      // get response from searchGoogleBooks function
       const response = await searchGoogleBooks(searchInput);
       if (!response.ok) {
         throw new Error('something went wrong!');
       }
+      // get data from response
       const { items } = await response.json();
+      // map through data and create NEW array of bookData
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
@@ -42,7 +42,9 @@ const SearchBooks = () => {
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
+      // setSearchedBooks to bookData
       setSearchedBooks(bookData);
+      // clear searchInput value
       setSearchInput('');
     } catch (err) {
       console.error(err);
@@ -76,6 +78,7 @@ const SearchBooks = () => {
       if (!data.saveBook) {
         throw new Error('something went wrong!');
       }
+      // if data, get bookId and save to savedBookIds
       setSavedBookIds([...savedBookIds, bookData.bookId]);
     } catch (err) {
       console.error(err);

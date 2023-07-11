@@ -53,7 +53,7 @@ export const LOGIN_USER = gql`
   }
 `;
 
-// Define the GraphQL mutation for creating a user
+// creating a user
 export const SIGNUP_USER = gql`
   mutation signup($username: String!, $email: String!, $password: String!) {
     addUser(username: $username, email: $email, password: $password) {

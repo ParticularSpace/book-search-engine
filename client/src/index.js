@@ -4,10 +4,5 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import App from './App';
 
-
-ReactDOM.render(
- 
-    <App />
-,
-  document.getElementById('root')
-);
+// Render the App component to the root element
+ReactDOM.render( <App />, document.getElementById('root'));

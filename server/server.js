@@ -69,7 +69,7 @@ const server = new ApolloServer({
   // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
-
+  // serve index.html if we hit any route that isn't already specified
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
   });

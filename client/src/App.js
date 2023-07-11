@@ -7,10 +7,12 @@ import Navbar from './components/Navbar';
 import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
+// create http link
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
 
+// create auth link
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem('id_token');
