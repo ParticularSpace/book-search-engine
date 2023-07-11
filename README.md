@@ -30,7 +30,7 @@
   
   ## Images
   
-  ![Search Page](public/sceenshot.png "Search Page")
+  ![Search Page](client/build/screenshot.png "Search Page")
   
   ## License
 
